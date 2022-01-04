@@ -5,12 +5,16 @@ import com.androiddevs.data.collections.User
 import com.androiddevs.data.registerUser
 import com.androiddevs.data.requests.AccountRequest
 import com.androiddevs.data.responses.SimpleResponse
-import io.ktor.application.*
+import io.ktor.application.call
+import io.ktor.features.ContentTransformationException
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.OK
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.request.receive
+import io.ktor.response.respond
+import io.ktor.routing.Route
+import io.ktor.routing.post
+import io.ktor.routing.route
 
 //coroutine function
 fun Route.registerRoute(){
