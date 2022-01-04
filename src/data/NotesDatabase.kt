@@ -2,8 +2,10 @@ package com.androiddevs.data
 
 import com.androiddevs.data.collections.Note
 import com.androiddevs.data.collections.User
+import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
+import org.litote.kmongo.not
 import org.litote.kmongo.reactivestreams.KMongo
 
 //specify how we want to access database
@@ -33,4 +35,10 @@ suspend fun checkIfUserExists(email:String):Boolean{
 suspend fun checkPasswordForEmail(email: String,passwordToCheck:String):Boolean{
     val actualPassword = users.findOne(User::email eq email)?.password ?: return false
     return actualPassword == passwordToCheck
+}
+
+
+
+suspend fun getNotesForUser(email: String): List<Note> {
+    return notes.find(Note::owners contains  email).toList()
 }
