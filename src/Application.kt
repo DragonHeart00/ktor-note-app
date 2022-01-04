@@ -2,6 +2,7 @@ package com.androiddevs
 
 import com.androiddevs.data.collections.User
 import com.androiddevs.data.registerUser
+import com.androiddevs.routs.loginRoute
 import com.androiddevs.routs.registerRoute
 import io.ktor.application.*
 import io.ktor.features.*
@@ -22,6 +23,7 @@ fun Application.module(testing: Boolean = false) {
     install(CallLogging)
     install(Routing){
         registerRoute()
+        loginRoute()
     }
 
     install(ContentNegotiation){
