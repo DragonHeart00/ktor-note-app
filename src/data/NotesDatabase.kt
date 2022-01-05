@@ -7,6 +7,7 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
 import org.litote.kmongo.not
 import org.litote.kmongo.reactivestreams.KMongo
+import org.litote.kmongo.setValue
 
 //specify how we want to access database
 private val client = KMongo.createClient().coroutine
@@ -52,4 +53,17 @@ suspend fun saveNote(note: Note):Boolean{
     }else {
         notes.insertOne(note).wasAcknowledged()
     }
+}
+
+suspend fun deleteNoteForUser(email: String, noteId:String):Boolean{
+    val note = notes.findOne(Note::id eq noteId, Note::owners contains email )
+    note?.let { note ->
+        if(note.owners.size > 1){
+            //the note has multiple owners, so we just delete the email from the owners list
+            val newOwners = note.owners - email
+            val updateResult = notes.updateOne(Note::id eq note.id, setValue(Note::owners,newOwners))
+            return updateResult.wasAcknowledged()
+        }
+         return notes.deleteOneById(note.id).wasAcknowledged()
+    } ?: return false
 }

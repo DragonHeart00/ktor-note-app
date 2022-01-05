@@ -2,7 +2,9 @@ package com.androiddevs.routs
 
 
 import com.androiddevs.data.collections.Note
+import com.androiddevs.data.deleteNoteForUser
 import com.androiddevs.data.getNotesForUser
+import com.androiddevs.data.requests.DeleteNoteRequest
 import com.androiddevs.data.saveNote
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.application.call
@@ -27,6 +29,27 @@ fun Route.noteRoutes() {
             }
         }
     }
+
+    route("deleteNote"){
+        authenticate {
+            post {
+                val email = call.principal<UserIdPrincipal>()!!.name
+                val request = try {
+                    call.receive<DeleteNoteRequest>()
+                } catch (e : ContentTransformationException){
+                    call.respond(BadRequest)
+                    return@post
+                }
+                if (deleteNoteForUser(email,request.id)) {
+                    call.respond(OK)
+                }else{
+                    call.respond(Conflict)
+                }
+            }
+        }
+    }
+
+
     route("/addNote"){
         authenticate {
             post {
