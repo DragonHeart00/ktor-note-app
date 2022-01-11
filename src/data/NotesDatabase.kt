@@ -2,6 +2,8 @@ package com.androiddevs.data
 
 import com.androiddevs.data.collections.Note
 import com.androiddevs.data.collections.User
+import com.androiddevs.security.checkHashForPassword
+import kotlinx.coroutines.flow.toList
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
@@ -35,11 +37,16 @@ suspend fun checkIfUserExists(email:String):Boolean{
 //when user want to sign in, we will check if the password same as user have created
 suspend fun checkPasswordForEmail(email: String,passwordToCheck:String):Boolean{
     val actualPassword = users.findOne(User::email eq email)?.password ?: return false
-    return actualPassword == passwordToCheck
+    return checkHashForPassword(passwordToCheck, actualPassword)
 }
 
-
-
+suspend fun getAllNotes(): List<Note> {
+    return notes.find().toFlow().toList()
+}
+/*
+*
+*
+* */
 suspend fun getNotesForUser(email: String): List<Note> {
     return notes.find(Note::owners contains  email).toList()
 }
